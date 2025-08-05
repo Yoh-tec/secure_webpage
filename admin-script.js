@@ -111,6 +111,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // マイナンバーのマスキング（セキュリティ考慮）
             const maskedMyNumber = maskMyNumber(item.mynumber);
 
+            // 住所の組み立て
+            const address = [
+                item.postal,
+                item.prefecture,
+                item.city,
+                item.building
+            ].filter(Boolean).join(' ');
+
             tableHTML += `
                 <tr>
                     <td>${formattedDate}</td>
@@ -119,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td class="mynumber-masked">${maskedMyNumber}</td>
                     <td>${escapeHtml(item.email || '-')}</td>
                     <td>${escapeHtml(item.phone || '-')}</td>
-                    <td>${escapeHtml(item.address || '-')}</td>
+                    <td>${escapeHtml(address || '-')}</td>
                 </tr>
             `;
         });

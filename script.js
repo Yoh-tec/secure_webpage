@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const successMessage = document.getElementById('successMessage');
     const backToFormBtn = document.getElementById('backToForm');
     const mynumberInput = document.getElementById('mynumber');
+    const postalInput = document.getElementById('postal');
 
     // マイナンバーの入力制限（数字のみ）
     mynumberInput.addEventListener('input', function(e) {
@@ -13,6 +14,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (this.value.length > 12) {
             this.value = this.value.slice(0, 12);
         }
+    });
+
+    // 郵便番号の自動フォーマット
+    postalInput.addEventListener('input', function(e) {
+        let value = this.value.replace(/[^\d]/g, '');
+        
+        if (value.length >= 3) {
+            value = value.slice(0, 3) + '-' + value.slice(3);
+        }
+        
+        this.value = value.slice(0, 8); // 最大8文字（ハイフン含む）
     });
 
     // フォーム送信処理
@@ -38,7 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
             mynumber: formData.get('mynumber'),
             email: formData.get('email'),
             phone: formData.get('phone'),
-            address: formData.get('address'),
+            postal: formData.get('postal'),
+            prefecture: formData.get('prefecture'),
+            city: formData.get('city'),
+            building: formData.get('building'),
             privacy: formData.get('privacy'),
             timestamp: new Date().toISOString()
         };
@@ -56,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // ボタンを元に戻す
             submitBtn.disabled = false;
-            submitBtn.textContent = '送信する';
+            submitBtn.textContent = '送信';
             form.classList.remove('loading');
         }, 1000);
     });
@@ -72,13 +87,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const name = document.getElementById('name').value.trim();
         const birthdate = document.getElementById('birthdate').value;
         const mynumber = document.getElementById('mynumber').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
         const privacy = document.getElementById('privacy').checked;
 
         let isValid = true;
 
         // 名前のバリデーション
         if (name.length < 2) {
-            showError('name', 'お名前は2文字以上で入力してください');
+            showError('name', '氏名は2文字以上で入力してください');
             isValid = false;
         } else {
             clearError('name');
@@ -110,9 +127,31 @@ document.addEventListener('DOMContentLoaded', function() {
             clearError('mynumber');
         }
 
+        // メールアドレスのバリデーション
+        if (!email) {
+            showError('email', 'メールアドレスを入力してください');
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            showError('email', '有効なメールアドレスを入力してください');
+            isValid = false;
+        } else {
+            clearError('email');
+        }
+
+        // 電話番号のバリデーション
+        if (!phone) {
+            showError('phone', '電話番号を入力してください');
+            isValid = false;
+        } else if (!/^[\d\-]{10,15}$/.test(phone)) {
+            showError('phone', '有効な電話番号を入力してください');
+            isValid = false;
+        } else {
+            clearError('phone');
+        }
+
         // プライバシーポリシーの同意
         if (!privacy) {
-            showError('privacy', '個人情報の取り扱いについて同意してください');
+            showError('privacy', '利用規約・プライバシーポリシーに同意してください');
             isValid = false;
         } else {
             clearError('privacy');
@@ -123,37 +162,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // エラーメッセージの表示
     function showError(fieldId, message) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = field.parentNode.querySelector('.error-message');
-        
-        if (errorDiv) {
-            errorDiv.textContent = message;
-        } else {
-            const newErrorDiv = document.createElement('div');
-            newErrorDiv.className = 'error-message';
-            newErrorDiv.textContent = message;
-            newErrorDiv.style.color = 'var(--error-color)';
-            newErrorDiv.style.fontSize = '0.9rem';
-            newErrorDiv.style.marginTop = '5px';
-            field.parentNode.appendChild(newErrorDiv);
+        const errorElement = document.getElementById(fieldId + '-error');
+        if (errorElement) {
+            errorElement.textContent = message;
         }
         
-        field.style.borderColor = 'var(--error-color)';
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.style.borderColor = 'var(--error-color)';
+        }
     }
 
     // エラーメッセージのクリア
     function clearError(fieldId) {
-        const field = document.getElementById(fieldId);
-        const errorDiv = field.parentNode.querySelector('.error-message');
-        
-        if (errorDiv) {
-            errorDiv.remove();
+        const errorElement = document.getElementById(fieldId + '-error');
+        if (errorElement) {
+            errorElement.textContent = '';
         }
         
-        field.style.borderColor = 'var(--border-color)';
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.style.borderColor = 'var(--border-color)';
+        }
     }
-
-
 
     // データの保存（ローカルストレージ）
     function saveUserData(userData) {
@@ -179,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // リアルタイムバリデーション
-    const inputs = form.querySelectorAll('input, textarea');
+    const inputs = form.querySelectorAll('input, select, textarea');
     inputs.forEach(input => {
         input.addEventListener('blur', function() {
             validateField(this);
@@ -193,7 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
         switch (fieldId) {
             case 'name':
                 if (value.length > 0 && value.length < 2) {
-                    showError(fieldId, 'お名前は2文字以上で入力してください');
+                    showError(fieldId, '氏名は2文字以上で入力してください');
                 } else {
                     clearError(fieldId);
                 }
@@ -212,6 +243,14 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'email':
                 if (value.length > 0 && !isValidEmail(value)) {
                     showError(fieldId, '有効なメールアドレスを入力してください');
+                } else {
+                    clearError(fieldId);
+                }
+                break;
+
+            case 'phone':
+                if (value.length > 0 && !/^[\d\-]{10,15}$/.test(value)) {
+                    showError(fieldId, '有効な電話番号を入力してください');
                 } else {
                     clearError(fieldId);
                 }
@@ -242,7 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // スマホでの入力体験向上
     // フォーカス時に自動スクロール
-    const allInputs = document.querySelectorAll('input, textarea');
+    const allInputs = document.querySelectorAll('input, textarea, select');
     allInputs.forEach(input => {
         input.addEventListener('focus', function() {
             // 少し遅延させてスクロール（キーボード表示を待つ）
