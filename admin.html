@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理者ページ - 個人情報管理システム</title>
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>管理者ページ</h1>
+            <p>個人情報管理システム</p>
+        </header>
+
+        <main>
+            <!-- ログインフォーム -->
+            <div id="loginForm" class="login-container">
+                <div class="login-box">
+                    <h2>管理者認証</h2>
+                    <form id="adminLoginForm">
+                        <div class="form-group">
+                            <label for="password">パスワード</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn-login">ログイン</button>
+                    </form>
+                    <div id="loginError" class="error-message" style="display: none;">
+                        パスワードが正しくありません
+                    </div>
+                </div>
+            </div>
+
+            <!-- データ表示エリア -->
+            <div id="dataArea" class="data-container" style="display: none;">
+                <div class="data-header">
+                    <h2>登録データ一覧</h2>
+                    <div class="data-controls">
+                        <button id="refreshBtn" class="btn-refresh">更新</button>
+                        <button id="exportBtn" class="btn-export">エクスポート</button>
+                        <button id="logoutBtn" class="btn-logout">ログアウト</button>
+                    </div>
+                </div>
+
+                <div class="data-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">総登録数</span>
+                        <span id="totalCount" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">今日の登録</span>
+                        <span id="todayCount" class="stat-value">0</span>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table id="dataTable" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>登録日時</th>
+                                <th>お名前</th>
+                                <th>生年月日</th>
+                                <th>マイナンバー</th>
+                                <th>メールアドレス</th>
+                                <th>電話番号</th>
+                                <th>住所</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <!-- データがここに動的に追加されます -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noDataMessage" class="no-data-message">
+                    <p>まだデータが登録されていません</p>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 個人情報管理システム</p>
+        </footer>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html> 

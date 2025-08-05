@@ -1,0 +1,364 @@
+/* カフェ風カラーパレット */
+:root {
+    --primary-color: #8B4513;      /* サドルブラウン */
+    --secondary-color: #DEB887;    /* バーリーウッド */
+    --accent-color: #D2691E;       /* チョコレート */
+    --background-color: #F5F5DC;   /* ベージュ */
+    --text-color: #2F2F2F;         /* ダークグレー */
+    --border-color: #CD853F;       /* ペルー */
+    --success-color: #228B22;      /* フォレストグリーン */
+    --error-color: #DC143C;        /* クリムゾン */
+    --light-bg: #FAF0E6;           /* ラインネン */
+    --white: #FFFFFF;
+    --table-header-bg: #8B4513;    /* テーブルヘッダー背景 */
+    --table-row-alt: #F5F5DC;      /* テーブル行の交互背景 */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 30px 0;
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(139, 69, 19, 0.1);
+}
+
+header h1 {
+    color: var(--primary-color);
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+header p {
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+main {
+    flex: 1;
+}
+
+/* ログインエリア */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.login-box {
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.15);
+    width: 100%;
+    max-width: 400px;
+}
+
+.login-box h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 1rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: var(--light-bg);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(210, 105, 30, 0.1);
+    background-color: var(--white);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+.btn-login:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.error-message {
+    color: var(--error-color);
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* データ表示エリア */
+.data-container {
+    background-color: var(--white);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(139, 69, 19, 0.15);
+    overflow: hidden;
+}
+
+.data-header {
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.data-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.data-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-refresh,
+.btn-export,
+.btn-logout {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-refresh {
+    background-color: var(--success-color);
+    color: var(--white);
+}
+
+.btn-refresh:hover {
+    background-color: #1a6b1a;
+}
+
+.btn-export {
+    background-color: var(--accent-color);
+    color: var(--white);
+}
+
+.btn-export:hover {
+    background-color: #b85a1a;
+}
+
+.btn-logout {
+    background-color: var(--error-color);
+    color: var(--white);
+}
+
+.btn-logout:hover {
+    background-color: #b01030;
+}
+
+/* 統計情報 */
+.data-stats {
+    display: flex;
+    gap: 20px;
+    padding: 20px 30px;
+    background-color: var(--light-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: var(--white);
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(139, 69, 19, 0.1);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* データテーブル */
+.data-table-container {
+    overflow-x: auto;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.data-table th {
+    background-color: var(--table-header-bg);
+    color: var(--white);
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.data-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--white);
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: var(--table-row-alt);
+}
+
+.data-table tbody tr:hover {
+    background-color: var(--secondary-color);
+    transition: background-color 0.2s ease;
+}
+
+/* マイナンバーの表示（セキュリティ考慮） */
+.mynumber-masked {
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+/* データなしメッセージ */
+.no-data-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.no-data-message p {
+    font-size: 1.1rem;
+}
+
+footer {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 0.9rem;
+    margin-top: 30px;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .login-box {
+        padding: 25px;
+    }
+    
+    .data-header {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    
+    .data-controls {
+        justify-content: center;
+    }
+    
+    .data-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .stat-item {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .data-table {
+        font-size: 0.8rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 10px;
+    }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.data-container,
+.login-box {
+    animation: fadeIn 0.5s ease-out;
+} 
