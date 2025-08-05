@@ -298,6 +298,17 @@ document.addEventListener('DOMContentLoaded', function() {
             loadAndDisplayData();
         }
     }, 5 * 60 * 1000);
+
+    // スマホでのタッチ体験向上
+    if ('ontouchstart' in window) {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                this.click();
+            });
+        });
+    }
 });
 
 // 通知アニメーション用CSS

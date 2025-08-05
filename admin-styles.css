@@ -309,40 +309,207 @@ footer {
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     .container {
-        padding: 15px;
+        padding: 10px;
+        min-height: auto;
+    }
+    
+    header {
+        margin-bottom: 20px;
+        padding: 20px 15px;
+    }
+    
+    header h1 {
+        font-size: 1.6rem;
+    }
+    
+    header p {
+        font-size: 1rem;
     }
     
     .login-box {
-        padding: 25px;
+        padding: 25px 20px;
+        margin: 0 10px;
+    }
+    
+    .login-box h2 {
+        font-size: 1.3rem;
+        margin-bottom: 25px;
+    }
+    
+    .form-group input {
+        padding: 10px 12px;
+        font-size: 16px; /* iOSでズームを防ぐ */
     }
     
     .data-header {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
+        padding: 15px 20px;
+        gap: 10px;
+    }
+    
+    .data-header h2 {
+        font-size: 1.3rem;
     }
     
     .data-controls {
         justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .btn-refresh,
+    .btn-export,
+    .btn-logout {
+        padding: 6px 12px;
+        font-size: 0.8rem;
     }
     
     .data-stats {
         flex-direction: column;
         gap: 10px;
+        padding: 15px 20px;
     }
     
     .stat-item {
         flex-direction: row;
         justify-content: space-between;
+        padding: 12px 20px;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+    }
+    
+    .stat-value {
+        font-size: 1.3rem;
     }
     
     .data-table {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
     }
     
     .data-table th,
     .data-table td {
-        padding: 8px 10px;
+        padding: 6px 8px;
+    }
+    
+    .data-table-container {
+        max-height: 400px;
+    }
+    
+    .no-data-message {
+        padding: 40px 20px;
+    }
+    
+    .no-data-message p {
+        font-size: 1rem;
+    }
+    
+    footer {
+        padding: 15px 0;
+        font-size: 0.8rem;
+        margin-top: 20px;
+    }
+}
+
+/* より小さい画面（iPhone SEなど） */
+@media (max-width: 375px) {
+    .container {
+        padding: 8px;
+    }
+    
+    header {
+        padding: 15px 10px;
+    }
+    
+    header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .login-box {
+        padding: 20px 15px;
+    }
+    
+    .data-header {
+        padding: 12px 15px;
+    }
+    
+    .data-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .data-controls {
+        gap: 6px;
+    }
+    
+    .btn-refresh,
+    .btn-export,
+    .btn-logout {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+    
+    .data-stats {
+        padding: 12px 15px;
+    }
+    
+    .stat-item {
+        padding: 10px 15px;
+    }
+    
+    .data-table {
+        font-size: 0.7rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 5px 6px;
+    }
+}
+
+/* 横画面（ランドスケープ）対応 */
+@media (max-width: 768px) and (orientation: landscape) {
+    .container {
+        padding: 8px;
+    }
+    
+    header {
+        margin-bottom: 15px;
+        padding: 15px 10px;
+    }
+    
+    .login-box {
+        padding: 20px 15px;
+    }
+    
+    .data-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 15px;
+    }
+    
+    .data-controls {
+        flex-direction: row;
+        gap: 8px;
+    }
+    
+    .data-stats {
+        flex-direction: row;
+        gap: 15px;
+        padding: 12px 15px;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px 15px;
+    }
+    
+    .data-table-container {
+        max-height: 300px;
     }
 }
 

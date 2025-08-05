@@ -237,4 +237,30 @@ document.addEventListener('DOMContentLoaded', function() {
         
         this.value = value.slice(0, 13); // 最大13文字（ハイフン含む）
     });
+
+    // スマホでの入力体験向上
+    // フォーカス時に自動スクロール
+    const allInputs = document.querySelectorAll('input, textarea');
+    allInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            // 少し遅延させてスクロール（キーボード表示を待つ）
+            setTimeout(() => {
+                this.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
+        });
+    });
+
+    // タッチデバイスでのホバー効果を無効化
+    if ('ontouchstart' in window) {
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                this.click();
+            });
+        });
+    }
 }); 
