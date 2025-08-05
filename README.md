@@ -12,31 +12,48 @@
 - 送信後の感謝メッセージ表示
 
 ### 管理者ページ（admin.html）
-- パスワード認証（パスワード: `Password`）
-- 登録データの一覧表示
+- JWT認証によるセキュアなログイン
+- 登録データの一覧表示（MongoDBから取得）
 - マイナンバーのマスキング表示
-- 統計情報（総登録数、今日の登録数）
+- 統計情報（総登録数、今日の登録数、過去7日間、過去30日間）
 - CSVエクスポート機能
 - セッション管理
+- レポートメール送信機能
 
 ## セキュリティ機能
 
 - マイナンバーの入力制限（12桁数字のみ）
 - 管理者ページでのマイナンバーマスキング表示
 - HTMLエスケープ処理
-- セッション管理
-- データのローカルストレージ保存
+- JWT認証によるセキュアなセッション管理
+- MongoDBでのデータ永続化
+- bcryptjsによるパスワードハッシュ化
+- Helmetによるセキュリティヘッダー
+- レート制限によるDDoS攻撃対策
+- CORS設定によるクロスオリジン制御
 
 ## ファイル構成
 
 ```
 form_portfolio/
-├── index.html          # メインフォームページ
-├── styles.css          # メインフォーム用スタイル
-├── script.js           # メインフォーム用スクリプト
-├── admin.html          # 管理者ページ
-├── admin-styles.css    # 管理者ページ用スタイル
-├── admin-script.js     # 管理者ページ用スクリプト
+├── server.js           # メインサーバーファイル
+├── package.json        # Node.js依存関係
+├── env.example         # 環境変数設定例
+├── public/             # 静的ファイル
+│   ├── index.html      # メインフォームページ
+│   ├── admin.html      # 管理者ページ
+│   ├── styles.css      # メインフォーム用スタイル
+│   ├── admin-styles.css # 管理者ページ用スタイル
+│   ├── script.js       # メインフォーム用スクリプト
+│   └── admin-script.js # 管理者ページ用スクリプト
+├── models/             # データベースモデル
+│   └── User.js         # ユーザーモデル
+├── routes/             # APIルート
+│   ├── users.js        # ユーザー関連API
+│   ├── admin.js        # 管理者関連API
+│   └── email.js        # メール関連API
+├── utils/              # ユーティリティ
+│   └── email.js        # メール送信機能
 └── README.md           # このファイル
 ```
 
@@ -75,31 +92,85 @@ form_portfolio/
 ## 技術仕様
 
 - **フロントエンド**: HTML5, CSS3, JavaScript (ES6+)
-- **データ保存**: ローカルストレージ
-- **セキュリティ**: クライアントサイドバリデーション、HTMLエスケープ
+- **バックエンド**: Node.js, Express.js
+- **データベース**: MongoDB
+- **メール送信**: Nodemailer
+- **認証**: JWT (JSON Web Token)
+- **セキュリティ**: bcryptjs, helmet, rate-limiting
 - **レスポンシブ**: モバイル対応デザイン
 - **ブラウザ対応**: モダンブラウザ（Chrome, Firefox, Safari, Edge）
 
+## 新機能
+
+### サーバーサイド機能
+- **MongoDBデータベース連携**: データの永続化と管理
+- **JWT認証**: セキュアな管理者ログイン
+- **メール通知**: 新規登録時にtest.test@gmail.comに通知メール送信
+- **レポート機能**: 管理者向け統計レポートメール送信
+- **API設計**: RESTful APIによるデータ管理
+
+### セキュリティ強化
+- **bcryptjs**: パスワードのハッシュ化
+- **Helmet**: セキュリティヘッダーの自動設定
+- **Rate Limiting**: DDoS攻撃対策
+- **CORS**: クロスオリジン制御
+- **入力バリデーション**: サーバーサイドでの厳密な検証
+
+## 環境設定
+
+### 必要な環境変数（.envファイル）
+```bash
+# サーバー設定
+PORT=3000
+NODE_ENV=development
+
+# MongoDB設定
+MONGODB_URI=mongodb://localhost:27017/secure_webpage
+
+# メール設定（Gmail使用例）
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASS=your-app-password
+EMAIL_TO=test.test@gmail.com
+
+# JWT設定
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# 管理者認証
+ADMIN_PASSWORD=Password
+ADMIN_EMAIL=admin@example.com
+```
+
+### Gmail設定
+1. Gmailアカウントで2段階認証を有効化
+2. アプリパスワードを生成
+3. `.env`ファイルの`EMAIL_PASS`にアプリパスワードを設定
+
 ## 注意事項
 
-⚠️ **重要**: このシステムはデモンストレーション用です。実際の運用では以下の点を考慮してください：
+⚠️ **重要**: 本格的な運用では以下の点を考慮してください：
 
-1. **サーバーサイド実装**: 現在はローカルストレージを使用していますが、実際の運用ではサーバーサイドでのデータ管理が必要です。
+1. **本番環境設定**: 
+   - 本番用MongoDB（MongoDB Atlas推奨）
+   - HTTPS通信の強制
+   - 環境変数の適切な管理
 
 2. **セキュリティ強化**: 
-   - HTTPS通信の使用
-   - サーバーサイドでのパスワード管理
-   - データベースでの暗号化保存
-   - CSRF対策
-   - XSS対策
+   - 強力なJWT_SECRETの設定
+   - 管理者パスワードの変更
+   - データベースアクセス制御
+   - ログ監視の実装
 
 3. **個人情報保護**: 
-   - 適切なアクセス制御
-   - データの暗号化
-   - ログ管理
+   - データの暗号化保存
+   - アクセスログの管理
    - データ保持期間の設定
+   - 定期的なセキュリティ監査
 
-4. **バックアップ**: 定期的なデータバックアップの実装
+4. **バックアップ**: 
+   - 定期的なデータベースバックアップ
+   - 障害復旧計画の策定
 
 ## 開発者向け情報
 
@@ -108,20 +179,32 @@ form_portfolio/
 # プロジェクトディレクトリに移動
 cd form_portfolio
 
-# ローカルサーバーを起動（例：Python）
-python -m http.server 8000
+# 依存関係をインストール
+npm install
 
-# または Node.js の http-server を使用
-npx http-server
+# 環境変数を設定
+cp env.example .env
+# .envファイルを編集して必要な設定を行ってください
+
+# MongoDBを起動（ローカル環境の場合）
+# MongoDBがインストールされていない場合は、MongoDB Atlasなどのクラウドサービスを使用
+
+# サーバーを起動
+npm start
+
+# 開発モードで起動（ファイル変更時に自動再起動）
+npm run dev
 
 # ブラウザでアクセス
-# http://localhost:8000
+# http://localhost:3000
 ```
 
 ### カスタマイズ
-- カラーパレットの変更: `styles.css` と `admin-styles.css` の `:root` セクション
-- 管理者パスワードの変更: `admin-script.js` の `ADMIN_PASSWORD` 定数
-- フォーム項目の追加: `index.html` のフォーム部分と `script.js` のバリデーション
+- カラーパレットの変更: `public/styles.css` と `public/admin-styles.css` の `:root` セクション
+- 管理者パスワードの変更: `.env` ファイルの `ADMIN_PASSWORD` 設定
+- メール設定の変更: `.env` ファイルの `EMAIL_*` 設定
+- フォーム項目の追加: `public/index.html` のフォーム部分と `public/script.js` のバリデーション
+- データベース設定: `.env` ファイルの `MONGODB_URI` 設定
 
 ## ライセンス
 

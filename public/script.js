@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // フォーム送信処理
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         // フォームのバリデーション
@@ -43,8 +43,28 @@ document.addEventListener('DOMContentLoaded', function() {
             timestamp: new Date().toISOString()
         };
 
-        // データの保存（ローカルストレージを使用）
-        saveUserData(userData);
+        // サーバーにデータを送信
+        try {
+            const response = await fetch('/api/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            });
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.message || '送信に失敗しました');
+            }
+
+            console.log('データが正常に保存されました');
+        } catch (error) {
+            console.error('データ送信エラー:', error);
+            alert('データの送信に失敗しました。もう一度お試しください。');
+            return;
+        }
 
         // 成功メッセージの表示
         setTimeout(() => {
@@ -153,28 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
         field.style.borderColor = 'var(--border-color)';
     }
 
-    // データの保存（ローカルストレージ）
-    function saveUserData(userData) {
-        try {
-            // 既存のデータを取得
-            const existingData = localStorage.getItem('userData');
-            let allData = [];
-            
-            if (existingData) {
-                allData = JSON.parse(existingData);
-            }
-            
-            // 新しいデータを追加
-            allData.push(userData);
-            
-            // データを保存
-            localStorage.setItem('userData', JSON.stringify(allData));
-            
-            console.log('データが正常に保存されました');
-        } catch (error) {
-            console.error('データの保存に失敗しました:', error);
-        }
-    }
+
 
     // リアルタイムバリデーション
     const inputs = form.querySelectorAll('input, textarea');
