@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    let adminToken = null;
+    // 管理者パスワード（実際の運用ではサーバーサイドで管理）
+    const ADMIN_PASSWORD = 'Password';
     
     const loginForm = document.getElementById('adminLoginForm');
     const loginFormContainer = document.getElementById('loginForm');
@@ -14,58 +15,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const todayCount = document.getElementById('todayCount');
 
     // ログイン処理
-    loginForm.addEventListener('submit', async function(e) {
+    loginForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
         const password = document.getElementById('password').value;
         
-        try {
-            const response = await fetch('/api/admin/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ password })
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                // ログイン成功
-                adminToken = result.token;
-                loginFormContainer.style.display = 'none';
-                dataArea.style.display = 'block';
-                loginError.style.display = 'none';
-                
-                // セッション管理
-                sessionStorage.setItem('adminLoggedIn', 'true');
-                sessionStorage.setItem('adminToken', result.token);
-                
-                // データを読み込んで表示
-                loadAndDisplayData();
-            } else {
-                // ログイン失敗
-                loginError.style.display = 'block';
-                document.getElementById('password').value = '';
-                document.getElementById('password').focus();
-            }
-        } catch (error) {
-            console.error('ログインエラー:', error);
+        if (password === ADMIN_PASSWORD) {
+            // ログイン成功
+            loginFormContainer.style.display = 'none';
+            dataArea.style.display = 'block';
+            loginError.style.display = 'none';
+            
+            // セッション管理（実際の運用ではサーバーサイドで管理）
+            sessionStorage.setItem('adminLoggedIn', 'true');
+            
+            // データを読み込んで表示
+            loadAndDisplayData();
+        } else {
+            // ログイン失敗
             loginError.style.display = 'block';
-            loginError.textContent = 'ログイン処理中にエラーが発生しました';
+            document.getElementById('password').value = '';
+            document.getElementById('password').focus();
         }
     });
 
     // セッション確認
     if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-        adminToken = sessionStorage.getItem('adminToken');
-        if (adminToken) {
-            loginFormContainer.style.display = 'none';
-            dataArea.style.display = 'block';
-            loadAndDisplayData();
-        } else {
-            sessionStorage.removeItem('adminLoggedIn');
-        }
+        loginFormContainer.style.display = 'none';
+        dataArea.style.display = 'block';
+        loadAndDisplayData();
     }
 
     // データ更新ボタン
@@ -82,39 +60,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // ログアウトボタン
     logoutBtn.addEventListener('click', function() {
         sessionStorage.removeItem('adminLoggedIn');
-        sessionStorage.removeItem('adminToken');
-        adminToken = null;
         location.reload();
     });
 
     // データの読み込みと表示
-    async function loadAndDisplayData() {
+    function loadAndDisplayData() {
         try {
-            const response = await fetch('/api/admin/users', {
-                headers: {
-                    'Authorization': `Bearer ${adminToken}`
-                }
-            });
-
-            if (!response.ok) {
-                if (response.status === 401) {
-                    // 認証エラー
-                    sessionStorage.removeItem('adminLoggedIn');
-                    sessionStorage.removeItem('adminToken');
-                    location.reload();
-                    return;
-                }
-                throw new Error('データの取得に失敗しました');
-            }
-
-            const result = await response.json();
+            const userData = localStorage.getItem('userData');
+            let data = [];
             
-            if (result.success) {
-                displayData(result.data.users);
-                updateStats(result.data.users);
-            } else {
-                throw new Error(result.message);
+            if (userData) {
+                data = JSON.parse(userData);
             }
+            
+            displayData(data);
+            updateStats(data);
         } catch (error) {
             console.error('データの読み込みに失敗しました:', error);
             showNotification('データの読み込みに失敗しました', 'error');
@@ -133,10 +93,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('dataTable').style.display = 'table';
         noDataMessage.style.display = 'none';
 
+        // データを日時順にソート（新しい順）
+        data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
         let tableHTML = '';
         
         data.forEach((item, index) => {
-            const date = new Date(item.createdAt);
+            const date = new Date(item.timestamp);
             const formattedDate = date.toLocaleString('ja-JP', {
                 year: 'numeric',
                 month: '2-digit',
@@ -145,14 +108,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 minute: '2-digit'
             });
 
-            const birthdate = new Date(item.birthdate).toLocaleDateString('ja-JP');
+            // マイナンバーのマスキング（セキュリティ考慮）
+            const maskedMyNumber = maskMyNumber(item.mynumber);
 
             tableHTML += `
                 <tr>
                     <td>${formattedDate}</td>
                     <td>${escapeHtml(item.name)}</td>
-                    <td>${birthdate}</td>
-                    <td class="mynumber-masked">${item.mynumber}</td>
+                    <td>${escapeHtml(item.birthdate)}</td>
+                    <td class="mynumber-masked">${maskedMyNumber}</td>
                     <td>${escapeHtml(item.email || '-')}</td>
                     <td>${escapeHtml(item.phone || '-')}</td>
                     <td>${escapeHtml(item.address || '-')}</td>
@@ -164,35 +128,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 統計情報の更新
-    async function updateStats(data) {
-        try {
-            const response = await fetch('/api/admin/stats', {
-                headers: {
-                    'Authorization': `Bearer ${adminToken}`
-                }
-            });
+    function updateStats(data) {
+        const total = data.length;
+        const today = new Date().toDateString();
+        const todayData = data.filter(item => {
+            const itemDate = new Date(item.timestamp).toDateString();
+            return itemDate === today;
+        });
 
-            if (response.ok) {
-                const result = await response.json();
-                if (result.success) {
-                    const stats = result.data;
-                    totalCount.textContent = stats.total;
-                    todayCount.textContent = stats.today;
-                }
-            }
-        } catch (error) {
-            console.error('統計情報の取得に失敗しました:', error);
-            // フォールバック: ローカルデータから計算
-            const total = data.length;
-            const today = new Date().toDateString();
-            const todayData = data.filter(item => {
-                const itemDate = new Date(item.createdAt).toDateString();
-                return itemDate === today;
-            });
-
-            totalCount.textContent = total;
-            todayCount.textContent = todayData.length;
-        }
+        totalCount.textContent = total;
+        todayCount.textContent = todayData.length;
     }
 
     // マイナンバーのマスキング
@@ -349,7 +294,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 定期的なデータ更新（5分間隔）
     setInterval(() => {
-        if (sessionStorage.getItem('adminLoggedIn') === 'true' && adminToken) {
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
             loadAndDisplayData();
         }
     }, 5 * 60 * 1000);
