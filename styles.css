@@ -129,27 +129,6 @@ main {
     transform: scale(1.2);
 }
 
-.checkmark {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    background-color: var(--light-bg);
-    border: 2px solid var(--border-color);
-    border-radius: 4px;
-    margin-right: 10px;
-    position: relative;
-}
-
-.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--success-color);
-    font-weight: bold;
-}
-
 .form-actions {
     display: flex;
     gap: 15px;
