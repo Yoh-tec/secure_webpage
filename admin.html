@@ -11,6 +11,8 @@
             // セッションストレージに管理者認証情報がない場合はリダイレクト
             if (!sessionStorage.getItem('adminLoggedIn') && !sessionStorage.getItem('adminPassword')) {
                 // 不正アクセスの場合はメインページにリダイレクト
+                console.log('認証情報がありません。メインページにリダイレクトします。');
+                alert('管理者ページに直接アクセスすることはできません。\nメインページから「管理者アクセス」ボタンを使用してください。');
                 window.location.href = 'index.html';
                 return;
             }
