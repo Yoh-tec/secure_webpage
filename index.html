@@ -155,9 +155,25 @@
 
         <footer>
             <p>&copy; 2024 個人情報管理システム</p>
+            <div class="admin-access">
+                <button id="adminAccessBtn" class="admin-access-btn">管理者アクセス</button>
+            </div>
         </footer>
     </div>
 
     <script src="script.js"></script>
+    <script>
+        // 管理者アクセスボタンの処理
+        document.getElementById('adminAccessBtn').addEventListener('click', function() {
+            const password = prompt('管理者パスワードを入力してください:');
+            if (password) {
+                // パスワードをセッションストレージに保存
+                sessionStorage.setItem('adminPassword', password);
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                // 管理者ページに移動
+                window.location.href = 'admin.html';
+            }
+        });
+    </script>
 </body>
 </html> 

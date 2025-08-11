@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>管理者ページ - 個人情報管理システム</title>
     <link rel="stylesheet" href="admin-styles.css">
+    <script>
+        // セキュリティチェック：直接アクセスを防ぐ
+        (function() {
+            // セッションストレージに管理者認証情報がない場合はリダイレクト
+            if (!sessionStorage.getItem('adminLoggedIn') && !sessionStorage.getItem('adminPassword')) {
+                // 不正アクセスの場合はメインページにリダイレクト
+                window.location.href = 'index.html';
+                return;
+            }
+        })();
+    </script>
 </head>
 <body>
     <div class="container">
@@ -31,8 +42,8 @@
                 </div>
             </div>
 
-            <!-- データ表示エリア -->
-            <div id="dataArea" class="data-container" style="display: none;">
+            <!-- 管理者パネル -->
+            <div id="adminPanel" class="data-container" style="display: none;">
                 <div class="data-header">
                     <h2>登録データ一覧</h2>
                     <div class="data-controls">
@@ -42,7 +53,7 @@
                     </div>
                 </div>
 
-                <div class="data-stats">
+                <div id="statsContainer" class="data-stats">
                     <div class="stat-item">
                         <span class="stat-label">総登録数</span>
                         <span id="totalCount" class="stat-value">0</span>
@@ -57,22 +68,23 @@
                     <table id="dataTable" class="data-table">
                         <thead>
                             <tr>
-                                <th>登録日時</th>
                                 <th>お名前</th>
                                 <th>生年月日</th>
                                 <th>マイナンバー</th>
                                 <th>メールアドレス</th>
                                 <th>電話番号</th>
-                                <th>住所</th>
+                                <th>都道府県</th>
+                                <th>市区町村</th>
+                                <th>登録日時</th>
                             </tr>
                         </thead>
-                        <tbody id="dataTableBody">
+                        <tbody>
                             <!-- データがここに動的に追加されます -->
                         </tbody>
                     </table>
                 </div>
 
-                <div id="noDataMessage" class="no-data-message">
+                <div id="noDataMessage" class="no-data-message" style="display: none;">
                     <p>まだデータが登録されていません</p>
                 </div>
             </div>
@@ -83,6 +95,6 @@
         </footer>
     </div>
 
-    <script src="admin-script.js"></script>
+    <script src="admin-script-aws-updated.js"></script>
 </body>
 </html> 

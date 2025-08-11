@@ -1,0 +1,9 @@
+{
+  "name": "form-portfolio-lambda",
+  "version": "1.0.0",
+  "description": "Form Portfolio Lambda Function",
+  "main": "lambda-function.js",
+  "dependencies": {
+    "aws-sdk": "^2.1000.0"
+  }
+}
